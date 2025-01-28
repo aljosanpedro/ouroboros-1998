@@ -17,6 +17,21 @@ end
 
 -- function Apple:update(dt)
 
+function Apple:isInside(snake)
+    local inside = false
+
+    for _, snake_part in ipairs(snake.parts) do
+        if  self.x == snake_part.x
+        and self.y == snake_part.y
+        then
+            inside = true
+            break
+        end
+    end
+
+    return inside
+end
+
 function Apple:spawn(grid, snake)
     while true do
         -- Propose Position

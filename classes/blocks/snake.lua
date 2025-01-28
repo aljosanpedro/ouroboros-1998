@@ -7,8 +7,8 @@ function Snake:new()
 
     self.alive = true
 
-    self.directions = { "right" }
-    self.direction = nil
+    self.corner = "TOP_LEFT"
+    self.direction = "right"
 
     self.parts = {
         { x = 3, y = 1 },
@@ -27,58 +27,62 @@ function Snake:new()
 end
 
 
--- Snake:keypressed(key)
+-- function Snake:keypressed(key)
 
-function Snake:addDirection(key)
-    self.direction = self.directions[1]
-    local dir = self.direction
+-- function Snake:setDirection(key, snake,apple, timer)
+--     if not key == "space" then
+--         return
+--     end
 
-    local horizontal = (dir == "left" or dir == "right")
-    local vertical   = (dir == "up"   or dir == "down" )
-
-    if (key == "left"  and not horizontal)
-    or (key == "right" and not horizontal)
-    or (key == "up"    and not vertical  )
-    or (key == "down"  and not vertical  )
-    then
-        table.insert(self.directions, key)
-    end
-end
+--     for _, snake_part in ipairs(snake.parts) do
+--         if  apple:isInside(snake)
+--         and not timer:isDone(timer.MOVE) then
+--             --
+--         end
+--     end
+-- end
 
 
 -- function Snake:update()
-
-function Snake:setDirection()
-    if #self.directions > 1 then
-        table.remove(self.directions, 1)
-    end
-
-    self.direction = self.directions[1]
-end
 
 function Snake:setPosition(grid)
     -- Assign
     self.head = self.parts[1]
     self.next = { x = self.head.x, y = self.head.y }
 
-    local dir = self.direction
-    local x, y = self.next.x, self.next.y
+    -- Corner
+    local corner = self.corner
+
+    for name, grid_corner in pairs(grid.corners) do
+        if  grid_corner.x == self.head.x
+        and grid_corner.y == self.head.y
+        then
+            corner = name
+
+            break
+        end
+    end
+
+    self.corner = corner
 
     -- Movement
-    if     dir == "left"  then x = x - 1
-    elseif dir == "right" then x = x + 1
-    elseif dir == "up"    then y = y - 1
-    elseif dir == "down"  then y = y + 1
+    local dir  = self.direction
+    local x, y = self.next.x, self.next.y
+
+    if     corner == "TOP_LEFT"         then
+        if dir == "right" then x = x + 1 end
+        if dir == "left"  then y = y + 1 end
+    elseif corner == "TOP_RIGHT"        then
+        if dir == "right" then y = y + 1 end
+        if dir == "left"  then x = x - 1 end
+    elseif corner == "BOTTOM_RIGHT"     then
+        if dir == "right" then x = x - 1 end
+        if dir == "left"  then y = y - 1 end
+    elseif corner == "BOTTOM_LEFT"      then
+        if dir == "right" then y = y - 1 end
+        if dir == "left"  then x = x + 1 end
     end
 
-    -- Wrapping
-    if     x < 1         then x = grid.COLS
-    elseif x > grid.COLS then x = 1
-    elseif y < 1         then y = grid.ROWS
-    elseif y > grid.ROWS then y = 1
-    end
-
-    -- Update
     self.next.x, self.next.y = x, y
 end
 
@@ -100,10 +104,6 @@ end
 
 function Snake:addHead()
     table.insert(self.parts, 1, self.next)
-end
-
-function Snake:isEating(apple)
-    return ((self.head.x == apple.x) and (self.head.y == apple.y))
 end
 
 function Snake:removeTail()

@@ -3,7 +3,7 @@ local Blocks = Object:extend()
 
 
 function Blocks:new()
-    self.SIZE = 15
+    self.SIZE = 75
 end
 
 
