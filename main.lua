@@ -9,14 +9,14 @@ function love.load()
     -- Classes (Local)
     local Grid  = require "classes.blocks.grid"
     local Snake = require "classes.blocks.snake"
-    -- local Apple = require "classes.blocks.apple"
+    local Apple = require "classes.blocks.apple"
 
     local Timer = require "classes.timer"
 
     -- Objects (Global)
     grid  = Grid()
     snake = Snake()
-    -- apple = Apple()
+    apple = Apple(grid, snake)
 
     timer = Timer()
 
@@ -28,16 +28,9 @@ end
 
 
 function love.keypressed(key)
-    if key == "space" then
-        local dir = snake.direction
-
-        if dir == "right" then
-            dir = "left"
-        elseif dir == "left" then
-            dir = "right"
-        end
-
-        snake.direction = dir
+    if  key == "space"
+    and snake.alive then
+        snake.bite = true
     end
 end
 
@@ -56,14 +49,29 @@ function love.update(dt)
         -- snake:setDirection()
         snake:setPosition(grid)
 
+        if snake:isHit(grid) then
+            snake:addHead()
+            snake.alive = false
+            return
+        end
+
         -- Update Body
         snake:addHead()
 
-            -- Apple-related
-
-        snake:removeTail()
+        if apple:isInHead(snake)
+        and snake.bite
+        then
+            snake:setDirection()
+            if snake.alive then
+                apple:spawn(grid, snake)
+            end
+            timer:shorten()
+        else
+            snake:removeTail()
+        end
 
         -- Still Alive
+        snake.bite = false
         return
     end
 
@@ -77,7 +85,7 @@ end
 
 function love.draw()
     snake:draw()
-    -- apple:draw()
+    apple:draw()
 
-    grid:draw()
+    grid:draw(snake)
 end

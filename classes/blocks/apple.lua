@@ -5,8 +5,8 @@ local Apple = Blocks:extend()
 function Apple:new(grid, snake)
     Apple.super.new(self)
 
-    self.color = { 1.00, 0.30, 0.30 } -- Red
-    self.MODE = "fill"
+    self.color = { 1.00, 0.30, 0.30, 1 }
+    self.mode = "fill"
 
     self.x = nil
     self.y = nil
@@ -17,38 +17,71 @@ end
 
 -- function Apple:update(dt)
 
-function Apple:isInside(snake)
+function Apple:isInHead(snake)
     local inside = false
+    -- snake.head = snake.parts[1]
 
-    for _, snake_part in ipairs(snake.parts) do
-        if  self.x == snake_part.x
-        and self.y == snake_part.y
-        then
-            inside = true
-            break
-        end
+    if  self.x == snake.head.x
+    and self.y == snake.head.y
+    then
+        inside = true
     end
 
     return inside
+
+
+    -- for _, snake_part in ipairs(snake.parts) do
+    --     if  self.x == snake_part.x
+    --     and self.y == snake_part.y
+    --     then
+    --         inside = true
+    --         print("inside")
+
+    --         break
+    --     end
+    -- end
+
+    -- return inside
 end
 
 function Apple:spawn(grid, snake)
     while true do
+        -- Choose Side
+        local side = love.math.random(1,4)
+
+        -- Set Ranges
+        local x_min, x_max
+        local y_min, y_max
+
+        if     side == 1 then -- Top
+            x_min, x_max = 1, grid.max
+            y_min, y_max = 1, 1
+        elseif side == 2 then -- Right
+            x_min, x_max = grid.max, grid.max
+            y_min, y_max = 1, grid.max
+        elseif side == 3 then -- Bottom
+            x_min, x_max = 1, grid.max
+            y_min, y_max = grid.max, grid.max
+        elseif side == 4 then -- Left
+            x_min, x_max = 1, 1
+            y_min, y_max = 1, grid.max
+        end
+
         -- Propose Position
-        local new_x = love.math.random(1, grid.COLS)
-        local new_y = love.math.random(1, grid.ROWS)
+        local new_x = love.math.random(x_min, x_max)
+        local new_y = love.math.random(y_min, y_max)
 
         -- Track Empty
         local empty = true
 
-        -- Current Apple
+        -- Avoid Current Apple
         if  new_x == self.x
         and new_y == self.y
         then
             empty = false
         end
 
-        -- Snake
+        -- Avoid Snake
         for _, snake_part in ipairs(snake.parts) do
             if  new_x == snake_part.x
             and new_y == snake_part.y
@@ -69,7 +102,7 @@ function Apple:spawn(grid, snake)
 end
 
 
-function Apple:draw()
+function Apple:draw(snake)
     Apple.super.draw(self, self.x,self.y)
 end
 

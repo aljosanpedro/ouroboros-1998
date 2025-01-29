@@ -3,7 +3,7 @@ local Blocks = Object:extend()
 
 
 function Blocks:new()
-    self.SIZE = 50
+    self.LENGTH = 50
 end
 
 
@@ -15,13 +15,13 @@ function Blocks:draw(block_x, block_y)
     love.graphics.setColor(self.color)
 
     -- Rectangle
-    block_x = (block_x - 1) * self.SIZE
-    block_y = (block_y - 1) * self.SIZE
+    block_x = (block_x - 1) * self.LENGTH
+    block_y = (block_y - 1) * self.LENGTH
 
     love.graphics.rectangle(
-        self.MODE,
+        self.mode,
         block_x, block_y,
-        self.SIZE, self.SIZE
+        self.LENGTH, self.LENGTH
     )
 end
 

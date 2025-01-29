@@ -7,9 +7,11 @@ function Snake:new()
 
     self.alive = true
 
+    self.bite = false
+
     self.direction = "right"
     self.corner = "TOP_LEFT"
-    self.edge = "top"
+    self.side = "top"
 
     self.parts = {
         { x = 3, y = 1 },
@@ -17,19 +19,38 @@ function Snake:new()
         { x = 1, y = 1 },
     }
     self.head = nil
+    self.tail = nil
     self.next = nil
 
     self.colors = {
-        ALIVE = { 0.00, 0.50, 0.32 }, -- Dark Green
-        HEAD  = { 0.60, 1.00, 0.32 }, -- Green
-        DEAD  = { 0.50, 0.50, 0.50 }, -- Light Gray
+        ALIVE = { 0.60, 1.00, 0.32, 1 }, -- Light Green
+        HEAD  = { 0.00, 0.50, 0.32, 1 }, -- Dark Green
+        DEAD  = { 0.50, 0.50, 0.50, 1 }, -- Light Gray
     }
 
-    self.MODE = "fill"
+    self.mode = "fill"
 end
 
 
 -- function Snake:keypressed(key)
+
+function Snake:setDirection(key)
+    if love.math.random(0,1) == 1 then
+        local dir = self.direction
+
+        if dir == "right" then
+            dir = "left"
+        elseif dir == "left" then
+            dir = "right"
+        end
+
+        self.direction = dir
+    end
+end
+
+function Snake:didBite()
+    
+end
 
 -- function Snake:setDirection(key, snake,apple, timer)
 --     if not key == "space" then
@@ -53,19 +74,19 @@ function Snake:setPosition(grid)
     self.next = { x = self.head.x, y = self.head.y }
 
     local dir  = self.direction
-    local edge = self.edge
+    local side = self.side
     local corner = nil
     local x, y = self.next.x, self.next.y
 
-    -- Edge
-    -- Try and y not 1, max
-    if     y == 1         then edge = "top"
-    elseif x == grid.COLS then edge = "right"
-    elseif y == grid.ROWS then edge = "bottom"
-    elseif x == 1         then edge = "left"
+    -- Side
+    -- Try and y not 1, max?
+    if     y == 1        then side = "top"
+    elseif x == grid.max then side = "right"
+    elseif y == grid.max then side = "bottom"
+    elseif x == 1        then side = "left"
     end
 
-    self.edge = edge
+    self.side = side
 
     -- Corner
     for name, grid_corner in pairs(grid.corners) do
@@ -82,7 +103,7 @@ function Snake:setPosition(grid)
 
     -- Movement
     -- Try removing half of corner cases?
-    if edge == "top" then
+    if side == "top" then
         if corner == nil then
             if     dir == "right" then x = x + 1
             elseif dir == "left"  then x = x - 1
@@ -96,7 +117,7 @@ function Snake:setPosition(grid)
             elseif dir == "left"  then x = x - 1
             end
         end
-    elseif edge == "right" then
+    elseif side == "right" then
         if corner == nil then
             if     dir == "right" then y = y + 1
             elseif dir == "left"  then y = y - 1
@@ -110,7 +131,7 @@ function Snake:setPosition(grid)
             elseif dir == "left"  then y = y - 1
             end
         end
-    elseif edge == "bottom" then
+    elseif side == "bottom" then
         if corner == nil then
             if     dir == "right" then x = x - 1
             elseif dir == "left"  then x = x + 1
@@ -124,7 +145,7 @@ function Snake:setPosition(grid)
             elseif dir == "left"  then x = x + 1
             end
         end
-    elseif edge == "left" then
+    elseif side == "left" then
         if corner == nil then
             if     dir == "right" then y = y - 1
             elseif dir == "left"  then y = y + 1
@@ -144,20 +165,22 @@ function Snake:setPosition(grid)
     self.next.x, self.next.y = x, y
 end
 
-function Snake:isHit()
-    for part_number, part in ipairs(self.parts) do
-        -- Not tail, removed on tick
-        if  part_number ~= #self.parts
-        -- Next vs. Current
-        and self.next.x == part.x
-        and self.next.y == part.y
-        then
-            self.alive = false
-            return true
-        end
-    end
+function Snake:isHit(grid)
+    local max_parts = ((grid.max - 1) * 4) - 1
 
-    return false
+    return #self.parts == max_parts
+    -- self.tail = self.parts[#self.parts]
+
+    -- -- TODO: Check about "tail removed on next tick"
+    -- if  self.next.x == self.tail.x
+    -- and self.next.y == self.tail.y
+    -- then
+    --     love.load()
+    --     self.alive = false
+    --     return true
+    -- end
+
+    -- return false
 end
 
 function Snake:addHead()
@@ -174,12 +197,14 @@ function Snake:draw()
         if self.alive then
             self.color = self.colors.ALIVE
 
-            if part_number == 1 then
-                self.color = self.colors.HEAD
-            end
+            -- if part_number == 1 then
+            --     self.color = self.colors.HEAD
+            -- end
         else
             self.color = self.colors.DEAD
         end
+
+        -- self.color[4] = self.color[4] * 0.99
 
         Snake.super.draw(self, part.x,part.y)
     end

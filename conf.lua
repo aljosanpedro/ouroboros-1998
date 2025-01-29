@@ -8,7 +8,7 @@ function love.conf(t)
     t.window = {
         title = TITLE,
 
-        width  = grid.COLS * grid.SIZE,
-        height = grid.ROWS * grid.SIZE
+        width  = grid.max * grid.LENGTH,
+        height = grid.max * grid.LENGTH
     }
 end
