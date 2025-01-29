@@ -27,6 +27,21 @@ function love.load()
 end
 
 
+function love.keypressed(key)
+    if key == "space" then
+        local dir = snake.direction
+
+        if dir == "right" then
+            dir = "left"
+        elseif dir == "left" then
+            dir = "right"
+        end
+
+        snake.direction = dir
+    end
+end
+
+
 function love.update(dt)
     -- Timer
     timer:run(dt)
@@ -43,6 +58,9 @@ function love.update(dt)
 
         -- Update Body
         snake:addHead()
+
+            -- Apple-related
+
         snake:removeTail()
 
         -- Still Alive

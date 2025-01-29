@@ -5,8 +5,8 @@ local Grid = Blocks:extend()
 function Grid:new()
     Grid.super.new(self)
 
-    self.COLS = 5
-    self.ROWS = 7
+    self.COLS = 3
+    self.ROWS = 3
 
     self.corners = {
         TOP_LEFT     = { x = 1,         y = 1         },

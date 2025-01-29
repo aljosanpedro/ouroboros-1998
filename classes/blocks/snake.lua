@@ -7,8 +7,9 @@ function Snake:new()
 
     self.alive = true
 
-    self.corner = "TOP_LEFT"
     self.direction = "right"
+    self.corner = "TOP_LEFT"
+    self.edge = "top"
 
     self.parts = {
         { x = 3, y = 1 },
@@ -19,7 +20,8 @@ function Snake:new()
     self.next = nil
 
     self.colors = {
-        ALIVE = { 0.60, 1.00, 0.32 }, -- Green
+        ALIVE = { 0.00, 0.50, 0.32 }, -- Dark Green
+        HEAD  = { 0.60, 1.00, 0.32 }, -- Green
         DEAD  = { 0.50, 0.50, 0.50 }, -- Light Gray
     }
 
@@ -50,12 +52,25 @@ function Snake:setPosition(grid)
     self.head = self.parts[1]
     self.next = { x = self.head.x, y = self.head.y }
 
-    -- Corner
-    local corner = self.corner
+    local dir  = self.direction
+    local edge = self.edge
+    local corner = nil
+    local x, y = self.next.x, self.next.y
 
+    -- Edge
+    -- Try and y not 1, max
+    if     y == 1         then edge = "top"
+    elseif x == grid.COLS then edge = "right"
+    elseif y == grid.ROWS then edge = "bottom"
+    elseif x == 1         then edge = "left"
+    end
+
+    self.edge = edge
+
+    -- Corner
     for name, grid_corner in pairs(grid.corners) do
-        if  grid_corner.x == self.head.x
-        and grid_corner.y == self.head.y
+        if  grid_corner.x == self.next.x
+        and grid_corner.y == self.next.y
         then
             corner = name
 
@@ -66,23 +81,66 @@ function Snake:setPosition(grid)
     self.corner = corner
 
     -- Movement
-    local dir  = self.direction
-    local x, y = self.next.x, self.next.y
-
-    if     corner == "TOP_LEFT"         then
-        if dir == "right" then x = x + 1 end
-        if dir == "left"  then y = y + 1 end
-    elseif corner == "TOP_RIGHT"        then
-        if dir == "right" then y = y + 1 end
-        if dir == "left"  then x = x - 1 end
-    elseif corner == "BOTTOM_RIGHT"     then
-        if dir == "right" then x = x - 1 end
-        if dir == "left"  then y = y - 1 end
-    elseif corner == "BOTTOM_LEFT"      then
-        if dir == "right" then y = y - 1 end
-        if dir == "left"  then x = x + 1 end
+    -- Try removing half of corner cases?
+    if edge == "top" then
+        if corner == nil then
+            if     dir == "right" then x = x + 1
+            elseif dir == "left"  then x = x - 1
+            end
+        elseif corner == "TOP_LEFT" then
+            if     dir == "right" then x = x + 1
+            elseif dir == "left"  then y = y + 1
+            end
+        elseif corner == "TOP_RIGHT" then
+            if     dir == "right" then y = y + 1
+            elseif dir == "left"  then x = x - 1
+            end
+        end
+    elseif edge == "right" then
+        if corner == nil then
+            if     dir == "right" then y = y + 1
+            elseif dir == "left"  then y = y - 1
+            end
+        elseif corner == "TOP_RIGHT" then
+            if     dir == "right" then y = y + 1
+            elseif dir == "left"  then x = x - 1
+            end
+        elseif corner == "BOTTOM_RIGHT" then
+            if     dir == "right" then x = x - 1
+            elseif dir == "left"  then y = y - 1
+            end
+        end
+    elseif edge == "bottom" then
+        if corner == nil then
+            if     dir == "right" then x = x - 1
+            elseif dir == "left"  then x = x + 1
+            end
+        elseif corner == "BOTTOM_RIGHT" then
+            if     dir == "right" then x = x - 1
+            elseif dir == "left"  then y = y - 1
+            end
+        elseif corner == "BOTTOM_LEFT" then
+            if     dir == "right" then y = y - 1
+            elseif dir == "left"  then x = x + 1
+            end
+        end
+    elseif edge == "left" then
+        if corner == nil then
+            if     dir == "right" then y = y - 1
+            elseif dir == "left"  then y = y + 1
+            end
+        elseif corner == "BOTTOM_LEFT" then
+            if     dir == "right" then y = y - 1
+            elseif dir == "left"  then x = x + 1
+            end
+        elseif corner == "TOP_LEFT" then
+            if     dir == "right" then x = x + 1
+            elseif dir == "left"  then y = y + 1
+            end
+        end
     end
 
+    self.direction = dir
     self.next.x, self.next.y = x, y
 end
 
@@ -112,13 +170,17 @@ end
 
 
 function Snake:draw()
-    if self.alive then
-        self.color = self.colors.ALIVE
-    else
-        self.color = self.colors.DEAD
-    end
+    for part_number, part in ipairs(self.parts) do
+        if self.alive then
+            self.color = self.colors.ALIVE
 
-    for _, part in ipairs(self.parts) do
+            if part_number == 1 then
+                self.color = self.colors.HEAD
+            end
+        else
+            self.color = self.colors.DEAD
+        end
+
         Snake.super.draw(self, part.x,part.y)
     end
 end

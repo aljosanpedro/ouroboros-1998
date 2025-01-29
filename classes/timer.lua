@@ -3,7 +3,7 @@ local Timer = Object:extend()
 
 
 function Timer:new()
-    self.MOVE = 0.15
+    self.MOVE = 0.1
     self.DIE  = 2.00
 
     self.time = 0
