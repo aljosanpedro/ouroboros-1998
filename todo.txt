@@ -1,17 +1,21 @@
 - aesthetic
+    - center square
+        - food remaining?
     - snake color
         - greens, yellows?
-        - try lower alpha per block
+        - try lower alpha per part
+        - try alternating colors per part
     - background
         - grid continually builds on itself?
         - red?
-
-- functional
     - apple in snake
-        - visual indicator
-    - snake head hit tail / win
-        - max
-        - food
-    - snake alive / win condition
-        - win = hit tail
-        - lose = miss food on press
+        - color change
+        - vfx?
+        - sound
+    - successful bite  
+        - vfx?
+        - sound
+- feel
+    - tweak
+        - block size
+        - timer props

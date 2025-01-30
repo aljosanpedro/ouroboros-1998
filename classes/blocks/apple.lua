@@ -5,9 +5,22 @@ local Apple = Blocks:extend()
 function Apple:new(grid, snake)
     Apple.super.new(self)
 
-    self.color = { 1.00, 0.30, 0.30, 1 }
+    -- self.colors = {
+    --     IDLE = { 1.00, 0.30, 0.30 },
+    --     OVER = { 1.00, 1.00, 0.40 }
+    -- }
+    self.color = { 1.00, 0.30, 0.30 }
     self.mode = "fill"
 
+    self.angle = 0
+
+    self.x = nil
+    self.y = nil
+
+    self:spawn(grid, snake)
+end
+
+function Apple:reset(grid, snake)
     self.x = nil
     self.y = nil
 
@@ -19,7 +32,6 @@ end
 
 function Apple:isInHead(snake)
     local inside = false
-    -- snake.head = snake.parts[1]
 
     if  self.x == snake.head.x
     and self.y == snake.head.y
@@ -28,20 +40,6 @@ function Apple:isInHead(snake)
     end
 
     return inside
-
-
-    -- for _, snake_part in ipairs(snake.parts) do
-    --     if  self.x == snake_part.x
-    --     and self.y == snake_part.y
-    --     then
-    --         inside = true
-    --         print("inside")
-
-    --         break
-    --     end
-    -- end
-
-    -- return inside
 end
 
 function Apple:spawn(grid, snake)
@@ -103,6 +101,16 @@ end
 
 
 function Apple:draw(snake)
+    -- if snake.alive then
+    --     snake.head = snake.parts[1]
+
+    --     if self:isInHead(snake) then
+    --         self.color = self.colors.OVER
+    --     else
+    --         self.color = self.colors.IDLE
+    --     end
+    -- end
+
     Apple.super.draw(self, self.x,self.y)
 end
 

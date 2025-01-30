@@ -5,7 +5,7 @@ local Grid = Blocks:extend()
 function Grid:new()
     Grid.super.new(self)
 
-    self.max = 5
+    self.max = 4
 
     self.corners = {
         TOP_LEFT     = { x = 1,         y = 1        },
@@ -16,18 +16,35 @@ function Grid:new()
 
     self.colors = {
         LINE = { 0.50, 0.50, 0.50 }, -- Light Gray
-        FILL = { 0.60, 1.00, 0.32 }, -- Light Green
+        fill = {
+            WIN = { 0.60, 1.00, 0.32 }, -- Light Green, Snake
+            LOSE = { 1.00, 0.30, 0.30 } -- Red, Apple
+        }
     }
     self.color = self.colors.LINE
+    self.color_square = nil
 
     self.mode = "line"
+end
+
+function Grid:raiseMax()
+    self.max = self.max + 1
+end
+
+function Grid:reset()
+    self.corners = {
+        TOP_LEFT     = { x = 1,         y = 1        },
+        TOP_RIGHT    = { x = self.max,  y = 1        },
+        BOTTOM_LEFT  = { x = 1,         y = self.max },
+        BOTTOM_RIGHT = { x = self.max,  y = self.max },
+    }
 end
 
 
 -- function Grid:update()
 
 
-function Grid:draw(snake)
+function Grid:draw(snake, apple)
     for grid_x = 1, self.max, 1 do
         for grid_y = 1, self.max, 1 do
             -- Corners
@@ -37,7 +54,12 @@ function Grid:draw(snake)
                 -- Fill
                 if not snake.alive then
                     self.mode = "fill"
-                    self.color = self.colors.FILL
+
+                    if snake.win then
+                        self.color = self.colors.fill.WIN
+                    else
+                        self.color = self.colors.fill.LOSE
+                    end
 
                     Grid.super.draw(self, grid_x, grid_y)
                 end
@@ -51,10 +73,32 @@ function Grid:draw(snake)
     end
 
     -- Inner Square
-    local square_W = (self.max - 2) * self.LENGTH
-    local square_H = (self.max - 2) * self.LENGTH
+    -- if snake.alive then
+    --     snake.head = snake.parts[1]
 
-    love.graphics.rectangle(self.mode, self.LENGTH,self.LENGTH, square_W,square_H)
+    --     if apple:isInHead(snake) then
+    --         self.color_square = self.colors.LINE
+    --     else
+    --         self.color_square = BG_COLOR
+    --     end
+    -- else
+    --     if snake.win then
+    --         self.color_square = self.colors.fill.WIN
+    --     else
+    --         self.color_square = self.colors.fill.LOSE
+    --     end
+    -- end
+
+    love.graphics.setColor(BG_COLOR)
+
+    local square_W = (self.max - 2) * self.length
+    local square_H = (self.max - 2) * self.length
+
+    love.graphics.rectangle("fill", self.length,self.length, square_W,square_H)
+
+    -- Cover Square
+    love.graphics.setColor(self.colors.LINE)
+    love.graphics.rectangle("line", self.length,self.length, square_W,square_H)
 end
 
 

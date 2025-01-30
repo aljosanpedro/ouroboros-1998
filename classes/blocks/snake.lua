@@ -2,68 +2,73 @@ local Blocks = require "classes.blocks"
 local Snake = Blocks:extend()
 
 
-function Snake:new()
+function Snake:new(grid)
     self.super.new(self)
 
     self.alive = true
-
-    self.bite = false
+    self.win   = nil
+    self.bite  = nil
+    self.grow  = nil
 
     self.direction = "right"
-    self.corner = "TOP_LEFT"
-    self.side = "top"
+    self.side      = "top"
+    self.corner    = "TOP_LEFT"
 
     self.parts = {
         { x = 3, y = 1 },
         { x = 2, y = 1 },
         { x = 1, y = 1 },
     }
+    self.max  = (grid.max - 1) * 4
+    self.min  = 2 -- Trust me.
     self.head = nil
     self.tail = nil
     self.next = nil
 
     self.colors = {
         ALIVE = { 0.60, 1.00, 0.32, 1 }, -- Light Green
-        HEAD  = { 0.00, 0.50, 0.32, 1 }, -- Dark Green
+        HEAD  = { 0.60, 1.00, 0.32, 0.5 }, -- Dark Green
         DEAD  = { 0.50, 0.50, 0.50, 1 }, -- Light Gray
     }
 
     self.mode = "fill"
 end
 
+function Snake:reset(grid)
+    self.alive = true
+    self.win   = nil
+    self.bite  = nil
+
+    self.direction = "right"
+    self.side      = "top"
+    self.corner    = "TOP_LEFT"
+
+    self.parts = { -- Moved back 1 left
+        { x = 2, y = 1 },
+        { x = 1, y = 1 },
+        { x = 0, y = 1 },
+    }
+    self.max  = (grid.max - 1) * 4
+    self.min  = 2 -- Trust me.
+    self.head = nil
+    self.tail = nil
+    self.next = nil
+end
+
 
 -- function Snake:keypressed(key)
 
-function Snake:setDirection(key)
-    if love.math.random(0,1) == 1 then
-        local dir = self.direction
+function Snake:changeDirection()
+    local dir = self.direction
 
-        if dir == "right" then
-            dir = "left"
-        elseif dir == "left" then
-            dir = "right"
-        end
-
-        self.direction = dir
+    if dir == "right" then
+        dir = "left"
+    elseif dir == "left" then
+        dir = "right"
     end
+
+    self.direction = dir
 end
-
-function Snake:didBite()
-    
-end
-
--- function Snake:setDirection(key, snake,apple, timer)
---     if not key == "space" then
---         return
---     end
-
---     for _, snake_part in ipairs(snake.parts) do
---         if  apple:isInside(snake)
---         and not timer:isDone(timer.MOVE) then
---             --
---         end
---     end
--- end
 
 
 -- function Snake:update()
@@ -165,24 +170,6 @@ function Snake:setPosition(grid)
     self.next.x, self.next.y = x, y
 end
 
-function Snake:isHit(grid)
-    local max_parts = ((grid.max - 1) * 4) - 1
-
-    return #self.parts == max_parts
-    -- self.tail = self.parts[#self.parts]
-
-    -- -- TODO: Check about "tail removed on next tick"
-    -- if  self.next.x == self.tail.x
-    -- and self.next.y == self.tail.y
-    -- then
-    --     love.load()
-    --     self.alive = false
-    --     return true
-    -- end
-
-    -- return false
-end
-
 function Snake:addHead()
     table.insert(self.parts, 1, self.next)
 end
@@ -193,6 +180,16 @@ end
 
 
 function Snake:draw()
+    -- if snake.bite then
+    --     if snake.grow then
+    --         self.color_square = snake.colors.ALIVE
+    --     else
+    --         self.color_square = apple.color
+    --     end
+
+    --     love.graphics.setColor(self.color_square)
+    -- end
+
     for part_number, part in ipairs(self.parts) do
         if self.alive then
             self.color = self.colors.ALIVE
