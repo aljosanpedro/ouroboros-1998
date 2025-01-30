@@ -16,8 +16,8 @@ function Snake:new(grid)
 
     self.parts = {
         { x = 3, y = 1 },
-        -- { x = 2, y = 1 },
-        -- { x = 1, y = 1 },
+        { x = 2, y = 1 },
+        { x = 1, y = 1 },
     }
     self.max  = (grid.max - 1) * 4
     self.min  = 2 -- Trust me.
@@ -51,6 +51,16 @@ function Snake:reset(grid)
         }
     elseif grid.max == 7 then
         self.parts = { -- Moved back 1 left
+            { x = 4, y = 1 },
+            { x = 3, y = 1 },
+            { x = 2, y = 1 },
+            { x = 1, y = 1 },
+            { x = 0, y = 1 },
+        }
+    elseif grid.max == 9 then
+        self.parts = { -- Moved back 1 left
+            { x = 6, y = 1 },
+            { x = 5, y = 1 },
             { x = 4, y = 1 },
             { x = 3, y = 1 },
             { x = 2, y = 1 },

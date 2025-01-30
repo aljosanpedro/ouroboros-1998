@@ -50,7 +50,7 @@ resetGame = function ()
         grid:raiseLength()
         grid:raiseMax()
 
-        if grid.max > 7 then
+        if grid.max > 9 then
             love.event.quit()
         end
 
@@ -88,6 +88,9 @@ end
 function love.update(dt)
     timer:run(dt)
 
+    if timer.time_bite > 0 then
+        timer.time_bite = timer.time_bite - dt
+    end
     if timer.time_shake > 0 then
         timer.time_shake = timer.time_shake - dt
     end
@@ -120,6 +123,8 @@ function love.update(dt)
     snake:addHead()
 
     if snake.bite then
+        timer.time_bite = timer.BITE
+
         if apple:isInHead(snake) then
             if #snake.parts == snake.max then
                 snake.alive = false
@@ -166,12 +171,12 @@ end
 function love.draw()
     love.graphics.push()
         if timer.time_shake > 0 then
-            love.graphics.translate(love.math.random(-3,3), love.math.random(-3,3))
+            love.graphics.translate(love.math.random(-2.5,2.5), love.math.random(-2.5,2.5))
         end
 
         snake:draw()
         apple:draw(snake)
 
-        grid:draw(snake, apple)
+        grid:draw(snake, timer)
     love.graphics.pop()
 end

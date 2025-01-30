@@ -5,21 +5,27 @@ local Timer = Object:extend()
 function Timer:new()
     self.MOVE = 0.125
     self.DIE  = 2.000
+    self.BITE = 0.25
     self.SHAKE = 0.25
 
     self.CHANGE = 0.05
 
     self.time = 0
+    self.time_bite = 0
     self.time_shake = 0
 end
 
 function Timer:reset()
     self.MOVE = 0.125
     self.DIE  = 2.000
+    self.BITE = 0.25
+    self.SHAKE = 0.25
 
     self.CHANGE = 0.05
 
     self.time = 0
+    self.time_bite = 0
+    self.time_shake = 0
 end
 
 
