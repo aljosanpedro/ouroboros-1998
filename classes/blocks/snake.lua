@@ -16,8 +16,8 @@ function Snake:new(grid)
 
     self.parts = {
         { x = 3, y = 1 },
-        { x = 2, y = 1 },
-        { x = 1, y = 1 },
+        -- { x = 2, y = 1 },
+        -- { x = 1, y = 1 },
     }
     self.max  = (grid.max - 1) * 4
     self.min  = 2 -- Trust me.
@@ -28,7 +28,7 @@ function Snake:new(grid)
     self.colors = {
         ALIVE = { 0.60, 1.00, 0.32, 1 }, -- Light Green
         HEAD  = { 0.60, 1.00, 0.32, 0.5 }, -- Dark Green
-        DEAD  = { 0.50, 0.50, 0.50, 1 }, -- Light Gray
+        DEAD  = { 1.00, 0.30, 0.30, 1 }, -- Red, Apple
     }
 
     self.mode = "fill"
@@ -43,11 +43,21 @@ function Snake:reset(grid)
     self.side      = "top"
     self.corner    = "TOP_LEFT"
 
-    self.parts = { -- Moved back 1 left
-        { x = 2, y = 1 },
-        { x = 1, y = 1 },
-        { x = 0, y = 1 },
-    }
+    if grid.max == 5 then
+        self.parts = { -- Moved back 1 left
+            { x = 2, y = 1 },
+            { x = 1, y = 1 },
+            { x = 0, y = 1 },
+        }
+    elseif grid.max == 7 then
+        self.parts = { -- Moved back 1 left
+            { x = 4, y = 1 },
+            { x = 3, y = 1 },
+            { x = 2, y = 1 },
+            { x = 1, y = 1 },
+            { x = 0, y = 1 },
+        }
+    end
     self.max  = (grid.max - 1) * 4
     self.min  = 2 -- Trust me.
     self.head = nil
@@ -180,20 +190,9 @@ end
 
 
 function Snake:draw()
-    -- if snake.bite then
-    --     if snake.grow then
-    --         self.color_square = snake.colors.ALIVE
-    --     else
-    --         self.color_square = apple.color
-    --     end
-
-    --     love.graphics.setColor(self.color_square)
-    -- end
-
     for part_number, part in ipairs(self.parts) do
         if self.alive then
             self.color = self.colors.ALIVE
-
             -- if part_number == 1 then
             --     self.color = self.colors.HEAD
             -- end

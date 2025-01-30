@@ -5,7 +5,8 @@ local Grid = Blocks:extend()
 function Grid:new()
     Grid.super.new(self)
 
-    self.max = 4
+    self.max = 3
+    self.INCREASE = 2
 
     self.corners = {
         TOP_LEFT     = { x = 1,         y = 1        },
@@ -28,7 +29,7 @@ function Grid:new()
 end
 
 function Grid:raiseMax()
-    self.max = self.max + 1
+    self.max = self.max + self.INCREASE
 end
 
 function Grid:reset()
@@ -89,7 +90,17 @@ function Grid:draw(snake, apple)
     --     end
     -- end
 
-    love.graphics.setColor(BG_COLOR)
+    if not snake.alive then
+        if snake.win then
+            self.color_square = snake.colors.ALIVE
+        else
+            self.color_square = snake.colors.DEAD
+        end
+    else
+        self.color_square = self.colors.LINE
+    end
+
+    love.graphics.setColor(self.color_square)
 
     local square_W = (self.max - 2) * self.length
     local square_H = (self.max - 2) * self.length
