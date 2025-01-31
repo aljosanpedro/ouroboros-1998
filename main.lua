@@ -127,9 +127,7 @@ function love.update(dt)
     if snake.bite then
         if apple:isInHead(snake) then
             snake.sounds.EAT_1:play()
-            -- snake.sounds.EAT_2:play()
-            snake.sounds.EAT_3:play()
-            -- snake.sounds.EAT_4:play()
+            snake.sounds.EAT_2:play()
 
             if #snake.parts == snake.max then
                 snake.alive = false

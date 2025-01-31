@@ -16,7 +16,7 @@ function Apple:new(grid, snake)
 
     self.sounds = {
         HEAD = love.audio.newSource("sfx/apple_on_head.wav", "static"),
-        BEAT = love.audio.newSource("sfx/final/neutral/apple_beat.wav", "static"),
+        BEAT = love.audio.newSource("sfx/apple_beat.wav", "static"),
     }
 
     self:spawn(grid, snake)

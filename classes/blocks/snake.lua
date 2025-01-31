@@ -36,11 +36,9 @@ function Snake:new(grid)
     self.sounds = {
         GAME_START = love.audio.newSource("sfx/start.wav", "static"),
 
-        EAT_1 = love.audio.newSource("sfx/final/good/eat1.wav", "static"),
-        EAT_2 = love.audio.newSource("sfx/final/good/eat2.wav", "static"),
-        EAT_3 = love.audio.newSource("sfx/final/good/eat3.wav", "static"),
-        EAT_4 = love.audio.newSource("sfx/final/good/eat4.wav", "static"),
-        NEXT_LEVEL = love.audio.newSource("sfx/final/good/next_level.wav", "static"),
+        EAT_1 = love.audio.newSource("sfx/eat1.wav", "static"),
+        EAT_2 = love.audio.newSource("sfx/eat2.wav", "static"),
+        NEXT_LEVEL = love.audio.newSource("sfx/next_level.wav", "static"),
 
         CHANGE_DIR = love.audio.newSource("sfx/change_dir.wav", "static"),
 
