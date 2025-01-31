@@ -5,10 +5,6 @@ local Apple = Blocks:extend()
 function Apple:new(grid, snake)
     Apple.super.new(self)
 
-    -- self.colors = {
-    --     IDLE = { 1.00, 0.30, 0.30 },
-    --     OVER = { 1.00, 1.00, 0.40 }
-    -- }
     self.color = { 1.00, 0.30, 0.30 }
     self.mode = "fill"
 
@@ -101,16 +97,6 @@ end
 
 
 function Apple:draw(snake)
-    -- if snake.alive then
-    --     snake.head = snake.parts[1]
-
-    --     if self:isInHead(snake) then
-    --         self.color = self.colors.OVER
-    --     else
-    --         self.color = self.colors.IDLE
-    --     end
-    -- end
-
     Apple.super.draw(self, self.x,self.y)
 end
 

@@ -1,4 +1,4 @@
-local TITLE = "Ouroboros"
+local TITLE = "Ouroboros 1998"
 
 local Grid = require "classes.blocks.grid"
 local grid = Grid()

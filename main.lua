@@ -3,11 +3,10 @@
 local grid, snake, apple
 local timer
 
+local BG_COLOR, SHAKE_STRENGTH
+
 local window, setWindow
-
 local resetRequested, resetGame
-
-local inner_mode, outer_mode = "line", "fill"
 
 
 function love.load()
@@ -28,6 +27,7 @@ function love.load()
 
     -- Constants
     BG_COLOR = { 0.28, 0.28, 0.28 }
+    SHAKE_STRENGTH = 4
 
     -- Variables
     resetRequested = nil
@@ -50,7 +50,7 @@ resetGame = function ()
         grid:raiseLength()
         grid:raiseMax()
 
-        if grid.max > 9 then
+        if grid.max > grid.HIGHEST then
             love.event.quit()
         end
 
@@ -62,7 +62,7 @@ resetGame = function ()
     snake:reset(grid)
     apple:reset(grid, snake)
 
-    timer:reset()
+    timer:restart("move")
 end
 
 
@@ -86,17 +86,13 @@ end
 
 
 function love.update(dt)
-    timer:run(dt)
-
-    if timer.time_bite > 0 then
-        timer.time_bite = timer.time_bite - dt
-    end
-    if timer.time_shake > 0 then
-        timer.time_shake = timer.time_shake - dt
-    end
+    timer:run("move", dt)
+    timer.time.shake = timer.time.shake - dt
 
     if not snake.alive then
-        if timer:isDone(timer.DIE) then
+        timer:run("die", dt)
+
+        if timer:isDone("die") then
             if snake.win then
                 resetGame()
             else
@@ -107,7 +103,7 @@ function love.update(dt)
         return
     end
 
-    if not timer:isDone(timer.MOVE) then
+    if not timer:isDone("move") then
         return
     end
 
@@ -116,15 +112,13 @@ function love.update(dt)
         resetRequested = false
     end
 
-    timer:restart()
+    timer:restart("move")
 
     snake:setPosition(grid)
-
     snake:addHead()
+    -- snake.grow = false
 
     if snake.bite then
-        timer.time_bite = timer.BITE
-
         if apple:isInHead(snake) then
             if #snake.parts == snake.max then
                 snake.alive = false
@@ -143,25 +137,24 @@ function love.update(dt)
             if #snake.parts == snake.min then
                 snake.alive = false
                 snake.win = false
-
                 return
             end
 
-            timer.time_shake = timer.SHAKE
-
             snake:changeDirection()
+            snake:removeTail()
             snake.grow = false
 
-            snake:removeTail()
+            timer.time.shake = timer.max.SHAKE
             timer:lengthen()
 
-            if #snake.parts > (snake.max / 2) then
-                snake:removeTail()
-                timer:lengthen()
-            end
+            -- if #snake.parts > (snake.max / 2) then
+            --     snake:removeTail()
+            --     timer:lengthen()
+            -- end
         end
 
         snake.bite = false
+        -- snake.grow = false
     end
 
     snake:removeTail()
@@ -170,13 +163,28 @@ end
 
 function love.draw()
     love.graphics.push()
-        if timer.time_shake > 0 then
-            love.graphics.translate(love.math.random(-2.5,2.5), love.math.random(-2.5,2.5))
+        -- Miss
+        if timer.time.shake > 0 then
+            love.graphics.translate(
+                love.math.random(-SHAKE_STRENGTH, SHAKE_STRENGTH),
+                love.math.random(-SHAKE_STRENGTH, SHAKE_STRENGTH)
+            )
         end
 
         snake:draw()
         apple:draw(snake)
 
-        grid:draw(snake, timer)
+        grid:draw(snake, apple, timer)
     love.graphics.pop()
+
+    -- Bite
+    if  snake.bite
+    and apple:isInHead(snake)
+    and #snake.parts < snake.max then
+        love.graphics.setColor(1, 1, 1, 0.25)
+    else
+        love.graphics.setColor(1, 1, 1, 0)
+    end
+
+    love.graphics.rectangle("fill", 0,0, grid.length*grid.max,grid.length*grid.max)
 end

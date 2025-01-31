@@ -9,6 +9,7 @@ function Snake:new(grid)
     self.win   = nil
     self.bite  = nil
     self.grow  = nil
+    self.miss  = nil
 
     self.direction = "right"
     self.side      = "top"
@@ -43,24 +44,21 @@ function Snake:reset(grid)
     self.side      = "top"
     self.corner    = "TOP_LEFT"
 
-    if grid.max == 5 then
+    if grid.max <= 5 then
         self.parts = { -- Moved back 1 left
             { x = 2, y = 1 },
             { x = 1, y = 1 },
             { x = 0, y = 1 },
         }
-    elseif grid.max == 7 then
+    elseif grid.max <= 7 then
         self.parts = { -- Moved back 1 left
-            { x = 4, y = 1 },
             { x = 3, y = 1 },
             { x = 2, y = 1 },
             { x = 1, y = 1 },
             { x = 0, y = 1 },
         }
-    elseif grid.max == 9 then
+    elseif grid.max <= 9 then
         self.parts = { -- Moved back 1 left
-            { x = 6, y = 1 },
-            { x = 5, y = 1 },
             { x = 4, y = 1 },
             { x = 3, y = 1 },
             { x = 2, y = 1 },
@@ -201,16 +199,16 @@ end
 
 function Snake:draw()
     for part_number, part in ipairs(self.parts) do
+        -- self.color = {1,1,1,0.5}
+        -- Snake.super.draw(self, part.x,part.y)
+
         if self.alive then
             self.color = self.colors.ALIVE
-            -- if part_number == 1 then
-            --     self.color = self.colors.HEAD
-            -- end
+            self.color[4] = ((self.max - (part_number - 1)) / self.max) + 0.2
+            -- print(self.color[4])
         else
             self.color = self.colors.DEAD
         end
-
-        -- self.color[4] = self.color[4] * 0.99
 
         Snake.super.draw(self, part.x,part.y)
     end

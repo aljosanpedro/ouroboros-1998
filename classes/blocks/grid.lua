@@ -5,8 +5,9 @@ local Grid = Blocks:extend()
 function Grid:new()
     Grid.super.new(self)
 
-    self.max = 5
-    self.INCREASE = 2
+    self.max = 4
+    self.INCREASE = 1
+    self.HIGHEST = 9
 
     self.corners = {
         TOP_LEFT     = { x = 1,         y = 1        },
@@ -18,8 +19,8 @@ function Grid:new()
     self.colors = {
         LINE = { 0.50, 0.50, 0.50 }, -- Light Gray
         fill = {
-            WIN = { 0.60, 1.00, 0.32 }, -- Light Green, Snake
-            LOSE = { 1.00, 0.30, 0.30 } -- Red, Apple
+            WIN = { 0.60, 1.00, 0.32, 1}, -- Light Green, Snake
+            LOSE = { 1.00, 0.30, 0.30, 1} -- Red, Apple
         }
     }
     self.color = self.colors.LINE
@@ -45,61 +46,39 @@ end
 -- function Grid:update()
 
 
-function Grid:draw(snake, timer)
+function Grid:draw(snake, apple, timer)
     -- Inner Square
-
     if snake.alive then
-        self.color_square = BG_COLOR
+        self.color_square = self.colors.LINE
 
-        if timer.time_bite > 0 then
-            if snake.grow then
-                self.color_square = snake.colors.ALIVE
-            else
-                self.color_square = snake.colors.DEAD
-            end
+        snake.head = snake.parts[1]
+        if apple:isInHead(snake) then
+            self.color_square = {1,1,1,0.5}
         end
     else
         if snake.win then
-            self.color_square = snake.colors.ALIVE
+            self.color_square = self.colors.fill.WIN
         else
-            self.color_square = snake.colors.DEAD
+            self.color_square = self.colors.fill.LOSE
         end
     end
-
-    love.graphics.setColor(self.colors.LINE)
-    love.graphics.rectangle(
-        "fill",
-        self.length,
-        self.length,
-        (self.max - 2) * self.length,
-        (self.max - 2) * self.length
-    )
-
-    love.graphics.setColor(self.colors.LINE)
-    love.graphics.rectangle(
-        "line",
-        self.length,
-        self.length,
-        (self.max - 2) * self.length,
-        (self.max - 2) * self.length
-    )
 
     love.graphics.setColor(self.color_square)
     love.graphics.rectangle(
         "fill",
-        (self.length * 2),
-        (self.length * 2),
-        (self.max - 4) * self.length,
-        (self.max - 4) * self.length
+        self.length,
+        self.length,
+        (self.max - 2) * self.length,
+        (self.max - 2) * self.length
     )
 
     love.graphics.setColor(self.colors.LINE)
     love.graphics.rectangle(
         "line",
-        (self.length * 2),
-        (self.length * 2),
-        (self.max - 4) * self.length,
-        (self.max - 4) * self.length
+        self.length,
+        self.length,
+        (self.max - 2) * self.length,
+        (self.max - 2) * self.length
     )
 
     for grid_x = 1, self.max, 1 do

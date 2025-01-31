@@ -2,56 +2,49 @@ local Object = require "libraries.classic"
 local Timer = Object:extend()
 
 
-function Timer:new()
-    self.MOVE = 0.125
-    self.DIE  = 2.000
-    self.BITE = 0.25
-    self.SHAKE = 0.25
-
+function Timer:reset()
+    self.max = {
+        MOVE  = 0.125,
+        DIE   = 2,
+        SHAKE = 0.25,
+    }
     self.CHANGE = 0.05
 
-    self.time = 0
-    self.time_bite = 0
-    self.time_shake = 0
+    self.time = {
+        move  = 0,
+        die   = 0,
+        shake = 0,
+    }
 end
 
-function Timer:reset()
-    self.MOVE = 0.125
-    self.DIE  = 2.000
-    self.BITE = 0.25
-    self.SHAKE = 0.25
-
-    self.CHANGE = 0.05
-
-    self.time = 0
-    self.time_bite = 0
-    self.time_shake = 0
+function Timer:new()
+    self:reset()
 end
 
 
 -- function Timer:keypressed(key)
 
 function Timer:shorten()
-    self.MOVE = self.MOVE * (1 - self.CHANGE)
+    self.max.MOVE = self.max.MOVE * (1 - self.CHANGE)
 end
 
 function Timer:lengthen()
-    self.MOVE = self.MOVE * (1 + self.CHANGE)
+    self.max.MOVE = self.max.MOVE * (1 + self.CHANGE)
 end
 
 
 -- function Timer:update(dt)
 
-function Timer:run(dt)
-    self.time = self.time + dt
+function Timer:run(type, dt)
+    self.time[type] = self.time[type] + dt
 end
 
-function Timer:isDone(max_time)
-    return self.time >= max_time
+function Timer:isDone(type)
+    return self.time[type] >= self.max[string.upper(type)]
 end
 
-function Timer:restart()
-    self.time = 0
+function Timer:restart(type)
+    self.time[type] = 0
 end
 
 

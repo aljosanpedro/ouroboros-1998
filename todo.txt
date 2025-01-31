@@ -1,21 +1,19 @@
 - aesthetic
-    - center square
-        - food remaining?
     - snake color
-        - greens, yellows?
-        - try lower alpha per part
-        - try alternating colors per part
-    - background
-        - grid continually builds on itself?
-        - red?
+        - alpha per part
     - apple in snake
-        - color change
-        - vfx?
         - sound
-    - successful bite  
-        - vfx?
+    - bite good
         - sound
 - feel
     - tweak
         - block size
         - timer props
+        - vfx
+            - apple in snake
+            - bite good
+- maintenance
+    - clean code
+        - timer
+        - snake
+        - grid
