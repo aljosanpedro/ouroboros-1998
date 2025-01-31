@@ -6,7 +6,7 @@ function Grid:new()
     Grid.super.new(self)
 
     self.max = 4
-    self.INCREASE = 1
+    self.INCREASE = 2
     self.HIGHEST = 9
 
     self.corners = {
@@ -25,6 +25,7 @@ function Grid:new()
     }
     self.color = self.colors.LINE
     self.color_square = nil
+    self.alpha = 1
 
     self.mode = "line"
 end
@@ -45,22 +46,33 @@ end
 
 -- function Grid:update()
 
+function Grid:changeAlpha(dt)
+    if self.alpha > 0 then
+        self.alpha = self.alpha - (dt * 1.5)
+    else
+        self.alpha = 1
+    end
+end
 
-function Grid:draw(snake, apple, timer)
+
+function Grid:draw(snake, apple)
     -- Inner Square
     if snake.alive then
         self.color_square = self.colors.LINE
 
         snake.head = snake.parts[1]
         if apple:isInHead(snake) then
-            self.color_square = {1,1,1,0.5}
+            self.color_square = {1, 1, 1, 0.5}
         end
     else
         if snake.win then
             self.color_square = self.colors.fill.WIN
+            self.color_square[4] = self.alpha
         else
             self.color_square = self.colors.fill.LOSE
+            self.color_square[4] = self.alpha
         end
+
     end
 
     love.graphics.setColor(self.color_square)

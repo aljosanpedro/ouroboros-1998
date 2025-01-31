@@ -9,20 +9,19 @@ function Snake:new(grid)
     self.win   = nil
     self.bite  = nil
     self.grow  = nil
-    self.miss  = nil
 
     self.direction = "right"
     self.side      = "top"
     self.corner    = "TOP_LEFT"
 
     self.parts = {
-        { x = 3, y = 1 },
-        { x = 2, y = 1 },
-        { x = 1, y = 1 },
+        { x = -1, y = 1 },
+        { x = -2, y = 1 },
+        { x = -3, y = 1 },
     }
     self.max  = (grid.max - 1) * 4
     self.min  = 2 -- Trust me.
-    self.head = nil
+    self.head = self.parts[1]
     self.tail = nil
     self.next = nil
 
@@ -33,6 +32,25 @@ function Snake:new(grid)
     }
 
     self.mode = "fill"
+
+    self.sounds = {
+        GAME_START = love.audio.newSource("sfx/start.wav", "static"),
+
+        EAT_1 = love.audio.newSource("sfx/final/good/eat1.wav", "static"),
+        EAT_2 = love.audio.newSource("sfx/final/good/eat2.wav", "static"),
+        EAT_3 = love.audio.newSource("sfx/final/good/eat3.wav", "static"),
+        EAT_4 = love.audio.newSource("sfx/final/good/eat4.wav", "static"),
+        NEXT_LEVEL = love.audio.newSource("sfx/final/good/next_level.wav", "static"),
+
+        CHANGE_DIR = love.audio.newSource("sfx/change_dir.wav", "static"),
+
+        MISS = love.audio.newSource("sfx/miss.wav", "static"),
+        DIE = love.audio.newSource("sfx/die.wav", "static"),
+
+        GAME_OVER = love.audio.newSource("sfx/game_over.wav", "static"),
+    }
+
+    self.sounds.GAME_START:play()
 end
 
 function Snake:reset(grid)
@@ -46,31 +64,34 @@ function Snake:reset(grid)
 
     if grid.max <= 5 then
         self.parts = { -- Moved back 1 left
-            { x = 2, y = 1 },
-            { x = 1, y = 1 },
-            { x = 0, y = 1 },
+            { x = -1, y = 1 },
+            { x = -2, y = 1 },
+            { x = -3, y = 1 },
         }
     elseif grid.max <= 7 then
         self.parts = { -- Moved back 1 left
-            { x = 3, y = 1 },
-            { x = 2, y = 1 },
-            { x = 1, y = 1 },
-            { x = 0, y = 1 },
+            { x = -1, y = 1 },
+            { x = -2, y = 1 },
+            { x = -3, y = 1 },
+            { x = -4, y = 1 },
         }
     elseif grid.max <= 9 then
         self.parts = { -- Moved back 1 left
-            { x = 4, y = 1 },
-            { x = 3, y = 1 },
-            { x = 2, y = 1 },
-            { x = 1, y = 1 },
-            { x = 0, y = 1 },
+            { x = -1, y = 1 },
+            { x = -2, y = 1 },
+            { x = -3, y = 1 },
+            { x = -4, y = 1 },
+            { x = -5, y = 1 },
         }
     end
+
     self.max  = (grid.max - 1) * 4
     self.min  = 2 -- Trust me.
-    self.head = nil
+    self.head = self.parts[1]
     self.tail = nil
     self.next = nil
+
+    self.sounds.GAME_START:play()
 end
 
 
@@ -84,6 +105,8 @@ function Snake:changeDirection()
     elseif dir == "left" then
         dir = "right"
     end
+
+    self.sounds.CHANGE_DIR:play()
 
     self.direction = dir
 end
@@ -204,7 +227,8 @@ function Snake:draw()
 
         if self.alive then
             self.color = self.colors.ALIVE
-            self.color[4] = ((self.max - (part_number - 1)) / self.max) + 0.2
+            local percent = ((self.max - (part_number - 1)) / self.max)
+            self.color[4] = percent
             -- print(self.color[4])
         else
             self.color = self.colors.DEAD

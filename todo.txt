@@ -1,17 +1,17 @@
-- aesthetic
-    - snake color
-        - alpha per part
+- sound
     - apple in snake
-        - sound
     - bite good
-        - sound
+    - miss
+    - win
+    - lose
 - feel
-    - tweak
-        - block size
-        - timer props
-        - vfx
-            - apple in snake
-            - bite good
+    - block size
+    - timer props
+    - vfx
+        - apple in snake
+        - bite good
+- functional
+    - timer for death sound after game over sound?
 - maintenance
     - clean code
         - timer

@@ -62,7 +62,7 @@ resetGame = function ()
     snake:reset(grid)
     apple:reset(grid, snake)
 
-    timer:restart("move")
+    timer:reset()
 end
 
 
@@ -91,6 +91,7 @@ function love.update(dt)
 
     if not snake.alive then
         timer:run("die", dt)
+        grid:changeAlpha(dt)
 
         if timer:isDone("die") then
             if snake.win then
@@ -103,13 +104,18 @@ function love.update(dt)
         return
     end
 
-    if not timer:isDone("move") then
-        return
+    apple:changeAlpha(grid, snake, dt)
+    if apple:isInHead(snake) then
+        apple.sounds.HEAD:play()
     end
 
     if resetRequested then
         resetGame()
         resetRequested = false
+    end
+
+    if not timer:isDone("move") then
+        return
     end
 
     timer:restart("move")
@@ -120,9 +126,15 @@ function love.update(dt)
 
     if snake.bite then
         if apple:isInHead(snake) then
+            snake.sounds.EAT_1:play()
+            -- snake.sounds.EAT_2:play()
+            snake.sounds.EAT_3:play()
+            -- snake.sounds.EAT_4:play()
+
             if #snake.parts == snake.max then
                 snake.alive = false
                 snake.win = true
+                snake.sounds.NEXT_LEVEL:play()
 
                 return
             end
@@ -134,9 +146,15 @@ function love.update(dt)
 
             timer:shorten()
         else
+            snake.sounds.MISS:play()
+            timer.time.shake = timer.max.SHAKE
+
             if #snake.parts == snake.min then
                 snake.alive = false
                 snake.win = false
+                snake.sounds.DIE:play()
+                snake.sounds.GAME_OVER:play()
+
                 return
             end
 
@@ -144,7 +162,6 @@ function love.update(dt)
             snake:removeTail()
             snake.grow = false
 
-            timer.time.shake = timer.max.SHAKE
             timer:lengthen()
 
             -- if #snake.parts > (snake.max / 2) then
@@ -162,6 +179,18 @@ end
 
 
 function love.draw()
+    -- Bite
+    if  snake.bite
+    and apple:isInHead(snake)
+    and #snake.parts < snake.max then
+        love.graphics.setColor(1, 1, 1, 0.15)
+    else
+        love.graphics.setColor(1, 1, 1, 0)
+    end
+
+    love.graphics.rectangle("fill", 0,0, grid.length*grid.max,grid.length*grid.max)
+
+    -- Game
     love.graphics.push()
         -- Miss
         if timer.time.shake > 0 then
@@ -171,20 +200,11 @@ function love.draw()
             )
         end
 
-        snake:draw()
-        apple:draw(snake)
+        if snake.alive then
+            snake:draw()
+            apple:draw()
+        end
 
-        grid:draw(snake, apple, timer)
+        grid:draw(snake, apple)
     love.graphics.pop()
-
-    -- Bite
-    if  snake.bite
-    and apple:isInHead(snake)
-    and #snake.parts < snake.max then
-        love.graphics.setColor(1, 1, 1, 0.25)
-    else
-        love.graphics.setColor(1, 1, 1, 0)
-    end
-
-    love.graphics.rectangle("fill", 0,0, grid.length*grid.max,grid.length*grid.max)
 end

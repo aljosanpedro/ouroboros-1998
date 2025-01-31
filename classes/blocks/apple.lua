@@ -5,13 +5,19 @@ local Apple = Blocks:extend()
 function Apple:new(grid, snake)
     Apple.super.new(self)
 
-    self.color = { 1.00, 0.30, 0.30 }
+    self.color = { 1.00, 0.30, 0.30, 1}
     self.mode = "fill"
+    self.alpha = 1
 
     self.angle = 0
 
     self.x = nil
     self.y = nil
+
+    self.sounds = {
+        HEAD = love.audio.newSource("sfx/apple_on_head.wav", "static"),
+        BEAT = love.audio.newSource("sfx/final/neutral/apple_beat.wav", "static"),
+    }
 
     self:spawn(grid, snake)
 end
@@ -36,6 +42,16 @@ function Apple:isInHead(snake)
     end
 
     return inside
+end
+
+function Apple:changeAlpha(grid, snake, dt)
+    if self.alpha > 0 then
+        local percent = ((grid.max - (#snake.parts - 1)) / grid.max)
+        self.alpha = self.alpha - (dt * (1.25 - percent))
+    else
+        self.alpha = 1
+        self.sounds.BEAT:play()
+    end
 end
 
 function Apple:spawn(grid, snake)
@@ -96,7 +112,8 @@ function Apple:spawn(grid, snake)
 end
 
 
-function Apple:draw(snake)
+function Apple:draw()
+    self.color[4] = self.alpha
     Apple.super.draw(self, self.x,self.y)
 end
 
