@@ -50,7 +50,7 @@ resetGame = function ()
         grid:raiseLength()
         grid:raiseMax()
 
-        if grid.max > grid.HIGHEST then
+        if grid.max >= grid.HIGHEST then
             love.event.quit()
         end
 
@@ -63,6 +63,11 @@ resetGame = function ()
     apple:reset(grid, snake)
 
     timer:reset()
+end
+
+
+function love.touchpressed(id, x, y, dx, dy, pressure)
+    snake.bite = true
 end
 
 
@@ -181,7 +186,7 @@ function love.draw()
     if  snake.bite
     and apple:isInHead(snake)
     and #snake.parts < snake.max then
-        love.graphics.setColor(1, 1, 1, 0.15)
+        love.graphics.setColor(1, 1, 1, 0.1)
     else
         love.graphics.setColor(1, 1, 1, 0)
     end

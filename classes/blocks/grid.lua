@@ -62,7 +62,7 @@ function Grid:draw(snake, apple)
 
         snake.head = snake.parts[1]
         if apple:isInHead(snake) then
-            self.color_square = {1, 1, 1, 0.5}
+            self.color_square = {1, 1, 1, 0.4}
         end
     else
         if snake.win then

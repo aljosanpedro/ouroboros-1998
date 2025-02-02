@@ -1,17 +1,10 @@
-- sound
-    - apple in snake
-    - bite good
-    - miss
-    - win
-    - lose
+- bugs
+    - sound
+        - bite good clips (lower volume)
 - feel
     - block size
+    - grid max
     - timer props
-    - vfx
-        - apple in snake
-        - bite good
-- functional
-    - timer for death sound after game over sound?
 - maintenance
     - clean code
         - timer

@@ -1,4 +1,4 @@
-local TITLE = "Ouroboros 1998"
+local TITLE = "Ouroboros_1998"
 
 local Grid = require "classes.blocks.grid"
 local grid = Grid()
@@ -11,4 +11,5 @@ function love.conf(t)
         width  = grid.max * grid.length,
         height = grid.max * grid.length
     }
+    t.version = "11.5"
 end
